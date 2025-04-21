@@ -1,11 +1,24 @@
 import { useState, useEffect, useRef } from 'react';
 import TralaleroImage from '../assets/tralalero.png';
+import jumpSound from '../assets/jumpingSound.mp3'; // Import jump sound
 
 const TralaleroMovement = ({ gameStarted, onGameOver }) => {
   const [position, setPosition] = useState(100);
   const [rotation, setRotation] = useState(0); // Tilt angle (degrees)
   const velocity = useRef(0);
   const isGameOver = useRef(false);
+  const audioRef = useRef(null); // For jump sound
+
+  // Initialize audio
+  useEffect(() => {
+    audioRef.current = new Audio(jumpSound);
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+    };
+  }, []);
 
   // Physics constants (tweak these for feel)
   const JUMP_FORCE = -12; // Negative = upward
@@ -20,6 +33,13 @@ const TralaleroMovement = ({ gameStarted, onGameOver }) => {
     const handleKeyDown = (e) => {
       if (e.code === 'Space') {
         e.preventDefault();
+        // Play jump sound
+        if (audioRef.current) {
+          audioRef.current.currentTime = 0; // Rewind to start
+          audioRef.current.play();
+        }
+        
+        // Apply jump physics
         velocity.current = JUMP_FORCE;
         setRotation(-MAX_ROTATION); // Tilt upward immediately on jump
       }
