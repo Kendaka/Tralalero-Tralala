@@ -1,19 +1,30 @@
 import { useState, useEffect, useRef } from 'react';
-import TralaleroImage from '../assets/tralalero.png';  
+import TralaleroImage from '../assets/tralalero.png';
 
-const TralaleroMovement = ({ gameStarted }) => {  
+const TralaleroMovement = ({ gameStarted, onGameOver }) => {
   const [position, setPosition] = useState(100);
   const gameAreaRef = useRef(null);
 
+  // Gravity effect
   useEffect(() => {
     if (!gameStarted) return;
 
     const gravityInterval = setInterval(() => {
-      setPosition(prev => prev + 2);
+      setPosition(prev => {
+        const newPosition = prev + 2;
+        
+        // Game over condition (adjust 500 to your screen height)
+        if (newPosition > 500) {
+          onGameOver();
+          return 100; // Reset position
+        }
+        
+        return newPosition;
+      });
     }, 20);
 
     return () => clearInterval(gravityInterval);
-  }, [gameStarted]);  
+  }, [gameStarted, onGameOver]);
 
   return (
     <div ref={gameAreaRef} className="relative w-full h-full overflow-hidden">
