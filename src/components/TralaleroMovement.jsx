@@ -1,28 +1,22 @@
 import { useState, useEffect, useRef } from 'react';
-import TralaleroImage from '../assets/tralalero.png';
+import TralaleroImage from '../assets/tralalero.png';  
 
-const TralaleroMovement = () => {
-  const [position, setPosition] = useState(100); // Initial Y position
-  const [gameStarted, setGameStarted] = useState(false);
+const TralaleroMovement = ({ gameStarted }) => {  
+  const [position, setPosition] = useState(100);
   const gameAreaRef = useRef(null);
 
-  // Gravity effect
   useEffect(() => {
     if (!gameStarted) return;
 
     const gravityInterval = setInterval(() => {
-      setPosition(prev => prev + 2); // Fall speed
+      setPosition(prev => prev + 2);
     }, 20);
 
     return () => clearInterval(gravityInterval);
-  }, [gameStarted]);
+  }, [gameStarted]);  
 
   return (
-    <div 
-      ref={gameAreaRef} 
-      className="relative w-full h-full overflow-hidden"
-      onClick={() => setGameStarted(true)} // Start game on click
-    >
+    <div ref={gameAreaRef} className="relative w-full h-full overflow-hidden">
       <img 
         src={TralaleroImage}
         alt="Tralalero"
