@@ -4,19 +4,26 @@ import TralaleroImage from '../assets/tralalero.png';
 const TralaleroMovement = ({ gameStarted, onGameOver }) => {
   const [position, setPosition] = useState(100);
   const gameAreaRef = useRef(null);
+  const isGameOver = useRef(false); 
 
-  // Gravity effect
   useEffect(() => {
-    if (!gameStarted) return;
+    if (gameStarted) {
+      setPosition(100);
+      isGameOver.current = false;
+    }
+  }, [gameStarted]);
+
+  useEffect(() => {
+    if (!gameStarted || isGameOver.current) return;
 
     const gravityInterval = setInterval(() => {
       setPosition(prev => {
         const newPosition = prev + 2;
         
-        // Game over condition (adjust 500 to your screen height)
-        if (newPosition > 500) {
-          onGameOver();
-          return 100; // Reset position
+        if (newPosition > 500 && !isGameOver.current) {
+          isGameOver.current = true;
+          onGameOver(); 
+          return prev; 
         }
         
         return newPosition;
@@ -25,6 +32,8 @@ const TralaleroMovement = ({ gameStarted, onGameOver }) => {
 
     return () => clearInterval(gravityInterval);
   }, [gameStarted, onGameOver]);
+
+  if (!gameStarted) return null;
 
   return (
     <div ref={gameAreaRef} className="relative w-full h-full overflow-hidden">
