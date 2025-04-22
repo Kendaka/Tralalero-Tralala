@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import "./App.css";
 import TralaleroMovement from './components/TralaleroMovement';
+import MovingBackground from './components/MovingBackground';
 import PlayButton from './components/PlayButton';
 import gameOverSound from './assets/tralaleroSound.mp3'; // Adjust file extension
 
