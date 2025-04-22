@@ -1,12 +1,14 @@
-import React from 'react';
+import backgroundImage from '../assets/movingBackground.png';
 
 const MovingBackground = () => {
   return (
     <div 
-      className="absolute inset-0 bg-[url('/assets/movingBackground.png')] bg-repeat-x moving-bg z-0"
+      className="absolute inset-0 z-0 moving-bg"
+      style={{
+        backgroundImage: `url(${backgroundImage})`,
+      }}
     ></div>
   );
 };
 
 export default MovingBackground;
-

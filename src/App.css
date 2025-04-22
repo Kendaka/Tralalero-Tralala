@@ -3,13 +3,15 @@
 /* Background animation */
 @keyframes moveBg {
     from { background-position: 0 0; }
-    to { background-position: 100% 0; }
+    to { background-position: -100% 0; } /* Negative = LEFT movement */
   }
   
-  .moving-bg {
-    animation: moveBg 15s linear infinite;
+/* App.css */
+.moving-bg {
+    animation: moveBg 10s linear infinite;
     background-size: auto 100%;
     background-repeat: repeat-x;
+    image-rendering: pixelated; /* For pixel art */
   }
   
   /* Optional: Add these if you want smoother character movement */
