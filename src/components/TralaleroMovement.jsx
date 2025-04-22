@@ -14,7 +14,7 @@ const TralaleroMovement = ({ gameStarted, onGameOver }) => {
   const GRAVITY = 0.5;
   const MAX_ROTATION = 25;
   const ROTATION_SPEED = 5;
-  const CEILING_HEIGHT = -50; // Minimum distance from top
+  const CEILING_HEIGHT = -50; 
 
   // Initialize audio
   useEffect(() => {
@@ -53,14 +53,13 @@ const TralaleroMovement = ({ gameStarted, onGameOver }) => {
     if (!gameStarted || isGameOver.current) return;
 
     const gameLoop = setInterval(() => {
-      // Apply gravity
       velocity.current += GRAVITY;
       setPosition(prev => {
         const newPosition = prev + velocity.current;
         
         // Prevent going above ceiling
         if (newPosition < CEILING_HEIGHT) {
-          velocity.current = 0; // Stop upward momentum
+          velocity.current = 0; 
           return CEILING_HEIGHT;
         }
         
@@ -68,7 +67,7 @@ const TralaleroMovement = ({ gameStarted, onGameOver }) => {
         if (newPosition > 500) {
           isGameOver.current = true;
           onGameOver();
-          return prev; // Freeze position
+          return prev;
         }
         
         return newPosition;
