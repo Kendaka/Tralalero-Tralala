@@ -30,7 +30,7 @@ function App() {
   };
 
   return (
-    <div className="relative h-screen w-full overflow-hidden">
+    <div className="relative h-screen w-full bg-amber-200 overflow-hidden">
       {/* Background (bottom layer) */}
       <MovingBackground />
       
