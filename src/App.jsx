@@ -3,10 +3,10 @@ import "./App.css";
 import TralaleroMovement from './components/TralaleroMovement';
 import MovingBackground from './components/MovingBackground';
 import PlayButton from './components/PlayButton';
-import gameOverSound from './assets/tralaleroSound.mp3'; // Adjust file extension
+import gameOverSound from './assets/tralaleroSound.mp3';
 
 function App() {
-  const [gameState, setGameState] = useState('idle'); // 'idle' | 'playing' | 'gameover'
+  const [gameState, setGameState] = useState('idle');
   const audioRef = useRef(null);
 
   // Initialize audio
@@ -30,19 +30,24 @@ function App() {
   };
 
   return (
-    <div className='bg-amber-950 h-screen w-full flex flex-col items-center justify-center'>
-      {gameState !== 'playing' && (
-        <PlayButton 
-          onClick={startGame}
-          text={gameState === 'gameover' ? "Play Again" : "Start Game"}
-        />
-      )}
-      {gameState === 'playing' && (
-        <TralaleroMovement 
-          gameStarted={true} 
-          onGameOver={handleGameOver}
-        />
-      )}
+    <div className="relative h-screen w-full overflow-hidden">
+      {/* Background (bottom layer) */}
+      <MovingBackground />
+      
+      {/* Game content (middle layer) */}
+      <div className="relative z-10 h-full flex flex-col items-center justify-center">
+        {gameState !== 'playing' ? (
+          <PlayButton 
+            onClick={startGame}
+            text={gameState === 'gameover' ? "Play Again" : "Start Game"}
+          />
+        ) : (
+          <TralaleroMovement 
+            gameStarted={true} 
+            onGameOver={handleGameOver}
+          />
+        )}
+      </div>
     </div>
   );
 }
