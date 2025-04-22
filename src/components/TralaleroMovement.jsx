@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import TralaleroImage from '../assets/tralalero.png';
+import Pipe from './Pipe';
 import jumpSound from '../assets/jumpingSound.mp3';
 
 const TralaleroMovement = ({ gameStarted, onGameOver }) => {
@@ -92,10 +93,23 @@ const TralaleroMovement = ({ gameStarted, onGameOver }) => {
 
   return (
     <div ref={gameAreaRef} className="relative w-full h-full overflow-hidden">
+      {/* Add pipes HERE - before character but after background */}
+      <Pipe 
+        left={300} 
+        topHeight={200} 
+        gap={150} 
+      />
+      <Pipe 
+        left={600} 
+        topHeight={150} 
+        gap={200} 
+      />
+  
+      {/* Character stays here */}
       <img 
         src={TralaleroImage}
         alt="Tralalero"
-        className="w-24 h-auto absolute origin-center transition-transform duration-100"
+        className="w-24 h-auto absolute origin-center transition-transform duration-100 z-10"
         style={{ 
           top: `${position}px`, 
           left: '50px',
