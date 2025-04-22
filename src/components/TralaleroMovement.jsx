@@ -1,13 +1,20 @@
 import { useState, useEffect, useRef } from 'react';
 import TralaleroImage from '../assets/tralalero.png';
-import jumpSound from '../assets/jumpingSound.mp3'; // Import jump sound
+import jumpSound from '../assets/jumpingSound.mp3';
 
 const TralaleroMovement = ({ gameStarted, onGameOver }) => {
   const [position, setPosition] = useState(100);
-  const [rotation, setRotation] = useState(0); // Tilt angle (degrees)
+  const [rotation, setRotation] = useState(0);
   const velocity = useRef(0);
   const isGameOver = useRef(false);
-  const audioRef = useRef(null); // For jump sound
+  const audioRef = useRef(null);
+  const gameAreaRef = useRef(null);
+
+  const JUMP_FORCE = -12;
+  const GRAVITY = 0.5;
+  const MAX_ROTATION = 25;
+  const ROTATION_SPEED = 5;
+  const CEILING_HEIGHT = -50; // Minimum distance from top
 
   // Initialize audio
   useEffect(() => {
@@ -20,12 +27,6 @@ const TralaleroMovement = ({ gameStarted, onGameOver }) => {
     };
   }, []);
 
-  // Physics constants (tweak these for feel)
-  const JUMP_FORCE = -12; // Negative = upward
-  const GRAVITY = 0.5;
-  const MAX_ROTATION = 25; // Max tilt angle
-  const ROTATION_SPEED = 5; // How fast tilt changes
-
   // Handle keyboard input
   useEffect(() => {
     if (!gameStarted || isGameOver.current) return;
@@ -33,15 +34,13 @@ const TralaleroMovement = ({ gameStarted, onGameOver }) => {
     const handleKeyDown = (e) => {
       if (e.code === 'Space') {
         e.preventDefault();
-        // Play jump sound
         if (audioRef.current) {
-          audioRef.current.currentTime = 0; // Rewind to start
+          audioRef.current.currentTime = 0;
           audioRef.current.play();
         }
         
-        // Apply jump physics
         velocity.current = JUMP_FORCE;
-        setRotation(-MAX_ROTATION); // Tilt upward immediately on jump
+        setRotation(-MAX_ROTATION);
       }
     };
 
@@ -56,25 +55,36 @@ const TralaleroMovement = ({ gameStarted, onGameOver }) => {
     const gameLoop = setInterval(() => {
       // Apply gravity
       velocity.current += GRAVITY;
-      setPosition(prev => prev + velocity.current);
-
-      // Dynamic rotation based on velocity
-      setRotation(prev => {
-        const targetRotation = Math.min(MAX_ROTATION, velocity.current * ROTATION_SPEED);
-        return lerp(prev, targetRotation, 0.1); // Smooth transition
+      setPosition(prev => {
+        const newPosition = prev + velocity.current;
+        
+        // Prevent going above ceiling
+        if (newPosition < CEILING_HEIGHT) {
+          velocity.current = 0; // Stop upward momentum
+          return CEILING_HEIGHT;
+        }
+        
+        // Ground collision
+        if (newPosition > 500) {
+          isGameOver.current = true;
+          onGameOver();
+          return prev; // Freeze position
+        }
+        
+        return newPosition;
       });
 
-      // Ground collision
-      if (position > 500) {
-        isGameOver.current = true;
-        onGameOver();
-      }
-    }, 16); // ~60fps
+      // Dynamic rotation
+      setRotation(prev => {
+        const targetRotation = Math.min(MAX_ROTATION, velocity.current * ROTATION_SPEED);
+        return lerp(prev, targetRotation, 0.1);
+      });
+
+    }, 16);
 
     return () => clearInterval(gameLoop);
   }, [gameStarted, position, onGameOver]);
 
-  // Linear interpolation for smooth rotation
   const lerp = (start, end, amt) => {
     return (1 - amt) * start + amt * end;
   };
@@ -82,7 +92,7 @@ const TralaleroMovement = ({ gameStarted, onGameOver }) => {
   if (!gameStarted) return null;
 
   return (
-    <div className="relative w-full h-full overflow-hidden">
+    <div ref={gameAreaRef} className="relative w-full h-full overflow-hidden">
       <img 
         src={TralaleroImage}
         alt="Tralalero"
