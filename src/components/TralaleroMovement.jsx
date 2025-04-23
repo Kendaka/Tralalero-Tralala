@@ -93,7 +93,6 @@ const TralaleroMovement = ({ gameStarted, onGameOver }) => {
 
   return (
     <div ref={gameAreaRef} className="relative w-full h-full overflow-hidden">
-      {/* Add pipes HERE - before character but after background */}
       <Pipe 
         left={300} 
         topHeight={200} 
