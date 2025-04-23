@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const Pipe = ({ topHeight = 150, gap = 300, left = 300, speed = 2, onCollide, birdPosition }) => {
+const Pipe = ({ topHeight = 300, gap = 700, left = 300, speed = 2, onCollide, birdPosition }) => {
   const [pipeLeft, setPipeLeft] = useState(left);
 
   useEffect(() => {
