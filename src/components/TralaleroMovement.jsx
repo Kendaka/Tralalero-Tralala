@@ -13,8 +13,8 @@ const TralaleroMovement = ({ gameStarted, onGameOver }) => {
   const gameAreaRef = useRef(null);
   const frameCount = useRef(0);
 
-  const JUMP_FORCE = -12;
-  const GRAVITY = 0.5;
+  const JUMP_FORCE = -8;
+  const GRAVITY = 0.4;
   const MAX_ROTATION = 25;
   const ROTATION_SPEED = 5;
   const CEILING_HEIGHT = -50;
@@ -134,7 +134,7 @@ const TralaleroMovement = ({ gameStarted, onGameOver }) => {
       <img 
         src={TralaleroImage}
         alt="Tralalero"
-        className="w-12 h-auto absolute origin-center transition-transform duration-100 z-10"
+        className="w-8 h-auto absolute origin-center transition-transform duration-100 z-10"
         style={{ 
           top: `${position}px`, 
           left: '50px',
