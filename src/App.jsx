@@ -3,6 +3,7 @@ import "./App.css";
 import TralaleroMovement from './components/TralaleroMovement';
 import MovingBackground from './components/MovingBackground';
 import PlayButton from './components/PlayButton';
+import Score from './components/Score'; // Add this import
 import gameOverSound from './assets/tralaleroSound.mp3';
 
 function App() {
@@ -34,6 +35,9 @@ function App() {
       {/* Background (bottom layer) */}
       <MovingBackground />
       
+      {/* High Score (top layer) */}
+      <Score />
+
       {/* Game content (middle layer) */}
       <div className="relative z-10 h-full flex flex-col items-center justify-center">
         {gameState !== 'playing' ? (
