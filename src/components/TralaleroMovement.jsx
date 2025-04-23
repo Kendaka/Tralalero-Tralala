@@ -13,13 +13,17 @@ const TralaleroMovement = ({ gameStarted, onGameOver }) => {
   const gameAreaRef = useRef(null);
   const frameCount = useRef(0);
 
+  // Physics constants
   const JUMP_FORCE = -8;
   const GRAVITY = 0.4;
   const MAX_ROTATION = 25;
   const ROTATION_SPEED = 5;
-  const CEILING_HEIGHT = -50;
+  const CEILING_HEIGHT = 0; // Changed from -50 to prevent going above screen
   const PIPE_SPEED = 2;
-  const PIPE_SPAWN_RATE = 120; 
+  const PIPE_SPAWN_RATE = 120;
+  const BIRD_WIDTH = 24;
+  const BIRD_HEIGHT = 24;
+  const GROUND_HEIGHT = 500;
 
   // Initialize audio
   useEffect(() => {
@@ -43,10 +47,10 @@ const TralaleroMovement = ({ gameStarted, onGameOver }) => {
           id: Date.now(),
           left: 400,
           topHeight: 150 + Math.random() * 100,
-          gap: 150
+          gap: 180 // Slightly increased gap for better playability
         }
       ]);
-    }, PIPE_SPAWN_RATE * 16); 
+    }, PIPE_SPAWN_RATE * 16);
 
     return () => clearInterval(pipeInterval);
   }, [gameStarted]);
@@ -82,15 +86,20 @@ const TralaleroMovement = ({ gameStarted, onGameOver }) => {
       velocity.current += GRAVITY;
       setPosition(prev => {
         const newPosition = prev + velocity.current;
+        
+        // Ceiling collision
         if (newPosition < CEILING_HEIGHT) {
           velocity.current = 0;
           return CEILING_HEIGHT;
         }
-        if (newPosition > 500) {
+        
+        // Ground collision (accounting for bird height)
+        if (newPosition > GROUND_HEIGHT - BIRD_HEIGHT) {
           isGameOver.current = true;
           onGameOver();
           return prev;
         }
+        
         return newPosition;
       });
 
@@ -128,6 +137,8 @@ const TralaleroMovement = ({ gameStarted, onGameOver }) => {
             onGameOver();
           }}
           birdPosition={position}
+          birdWidth={BIRD_WIDTH}
+          birdHeight={BIRD_HEIGHT}
         />
       ))}
       

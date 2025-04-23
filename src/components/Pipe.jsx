@@ -6,16 +6,32 @@ const Pipe = ({ topHeight = 300, gap = 700, left = 300, speed = 2, onCollide, bi
   useEffect(() => {
     if (!birdPosition) return;
     
-    const birdRight = 50 + 24; 
-    const birdLeft = 50;
-    const birdTop = birdPosition;
-    const birdBottom = birdPosition + 24;
+    // Bird hitbox dimensions
+    const bird = {
+      left: 50,
+      right: 50 + 24,
+      top: birdPosition,
+      bottom: birdPosition + 24
+    };
 
-    if (
-      birdRight > pipeLeft && 
-      birdLeft < pipeLeft + 80 &&
-      (birdTop < topHeight || birdBottom > topHeight + gap)
-    ) {
+    // Pipe hitbox dimensions
+    const pipe = {
+      left: pipeLeft,
+      right: pipeLeft + 80,
+      topPipeBottom: topHeight,
+      bottomPipeTop: topHeight + gap
+    };
+
+    // Check if bird is within pipe's x-range
+    const isInXRange = bird.right > pipe.left && bird.left < pipe.right;
+
+    // Check collision with top pipe
+    const hitTopPipe = isInXRange && bird.top < pipe.topPipeBottom;
+
+    // Check collision with bottom pipe
+    const hitBottomPipe = isInXRange && bird.bottom > pipe.bottomPipeTop;
+
+    if (hitTopPipe || hitBottomPipe) {
       onCollide();
     }
   }, [pipeLeft, birdPosition, topHeight, gap]);
