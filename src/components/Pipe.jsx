@@ -1,9 +1,34 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
-const Pipe = ({ topHeight = 200, gap = 150, left = 300 }) => {
+const Pipe = ({ topHeight = 200, gap = 150, left = 300, speed = 2, onCollide, birdPosition }) => {
+  const [pipeLeft, setPipeLeft] = useState(left);
+
+  useEffect(() => {
+    if (!birdPosition) return;
+    
+    const birdRight = 50 + 24; 
+    const birdLeft = 50;
+    const birdTop = birdPosition;
+    const birdBottom = birdPosition + 24;
+
+    if (
+      birdRight > pipeLeft && 
+      birdLeft < pipeLeft + 80 &&
+      (birdTop < topHeight || birdBottom > topHeight + gap)
+    ) {
+      onCollide();
+    }
+  }, [pipeLeft, birdPosition, topHeight, gap]);
+
+  useEffect(() => {
+    const movePipe = setInterval(() => {
+      setPipeLeft(prev => prev - speed);
+    }, 16);
+    return () => clearInterval(movePipe);
+  }, [speed]);
+
   return (
-    <div className="absolute" style={{ left: `${left}px` }}>
-      {/* Top Pipe */}
+    <div className="absolute" style={{ left: `${pipeLeft}px` }}>
       <div 
         className="absolute bg-green-500 border-r-4 border-l-4 border-green-700"
         style={{ 
@@ -12,8 +37,6 @@ const Pipe = ({ topHeight = 200, gap = 150, left = 300 }) => {
           height: `${topHeight}px` 
         }}
       />
-      
-      {/* Bottom Pipe */}
       <div 
         className="absolute bg-green-500 border-r-4 border-l-4 border-green-700"
         style={{ 

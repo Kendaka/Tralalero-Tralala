@@ -6,16 +6,20 @@ import jumpSound from '../assets/jumpingSound.mp3';
 const TralaleroMovement = ({ gameStarted, onGameOver }) => {
   const [position, setPosition] = useState(100);
   const [rotation, setRotation] = useState(0);
+  const [pipes, setPipes] = useState([]);
   const velocity = useRef(0);
   const isGameOver = useRef(false);
   const audioRef = useRef(null);
   const gameAreaRef = useRef(null);
+  const frameCount = useRef(0);
 
   const JUMP_FORCE = -12;
   const GRAVITY = 0.5;
   const MAX_ROTATION = 25;
   const ROTATION_SPEED = 5;
-  const CEILING_HEIGHT = -50; 
+  const CEILING_HEIGHT = -50;
+  const PIPE_SPEED = 2;
+  const PIPE_SPAWN_RATE = 120; 
 
   // Initialize audio
   useEffect(() => {
@@ -28,6 +32,25 @@ const TralaleroMovement = ({ gameStarted, onGameOver }) => {
     };
   }, []);
 
+  // Pipe generation
+  useEffect(() => {
+    if (!gameStarted || isGameOver.current) return;
+
+    const pipeInterval = setInterval(() => {
+      setPipes(prev => [
+        ...prev,
+        {
+          id: Date.now(),
+          left: 400,
+          topHeight: 150 + Math.random() * 100,
+          gap: 150
+        }
+      ]);
+    }, PIPE_SPAWN_RATE * 16); 
+
+    return () => clearInterval(pipeInterval);
+  }, [gameStarted]);
+
   // Handle keyboard input
   useEffect(() => {
     if (!gameStarted || isGameOver.current) return;
@@ -39,7 +62,6 @@ const TralaleroMovement = ({ gameStarted, onGameOver }) => {
           audioRef.current.currentTime = 0;
           audioRef.current.play();
         }
-        
         velocity.current = JUMP_FORCE;
         setRotation(-MAX_ROTATION);
       }
@@ -54,31 +76,32 @@ const TralaleroMovement = ({ gameStarted, onGameOver }) => {
     if (!gameStarted || isGameOver.current) return;
 
     const gameLoop = setInterval(() => {
+      frameCount.current += 1;
+      
+      // Movement
       velocity.current += GRAVITY;
       setPosition(prev => {
         const newPosition = prev + velocity.current;
-        
-        // Prevent going above ceiling
         if (newPosition < CEILING_HEIGHT) {
-          velocity.current = 0; 
+          velocity.current = 0;
           return CEILING_HEIGHT;
         }
-        
-        // Ground collision
         if (newPosition > 500) {
           isGameOver.current = true;
           onGameOver();
           return prev;
         }
-        
         return newPosition;
       });
 
-      // Dynamic rotation
+      // Rotation
       setRotation(prev => {
         const targetRotation = Math.min(MAX_ROTATION, velocity.current * ROTATION_SPEED);
         return lerp(prev, targetRotation, 0.1);
       });
+
+      // Clean up off-screen pipes
+      setPipes(prev => prev.filter(pipe => pipe.left > -80));
 
     }, 16);
 
@@ -93,18 +116,21 @@ const TralaleroMovement = ({ gameStarted, onGameOver }) => {
 
   return (
     <div ref={gameAreaRef} className="relative w-full h-full overflow-hidden">
-      <Pipe 
-        left={300} 
-        topHeight={200} 
-        gap={150} 
-      />
-      <Pipe 
-        left={600} 
-        topHeight={150} 
-        gap={200} 
-      />
-  
-      {/* Character stays here */}
+      {pipes.map(pipe => (
+        <Pipe
+          key={pipe.id}
+          left={pipe.left}
+          topHeight={pipe.topHeight}
+          gap={pipe.gap}
+          speed={PIPE_SPEED}
+          onCollide={() => {
+            isGameOver.current = true;
+            onGameOver();
+          }}
+          birdPosition={position}
+        />
+      ))}
+      
       <img 
         src={TralaleroImage}
         alt="Tralalero"
