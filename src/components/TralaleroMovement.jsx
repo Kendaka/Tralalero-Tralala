@@ -134,7 +134,7 @@ const TralaleroMovement = ({ gameStarted, onGameOver }) => {
       <img 
         src={TralaleroImage}
         alt="Tralalero"
-        className="w-24 h-auto absolute origin-center transition-transform duration-100 z-10"
+        className="w-12 h-auto absolute origin-center transition-transform duration-100 z-10"
         style={{ 
           top: `${position}px`, 
           left: '50px',
