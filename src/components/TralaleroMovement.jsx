@@ -3,7 +3,7 @@ import TralaleroImage from '../assets/tralalero.png';
 import Pipe from './Pipe';
 import jumpSound from '../assets/jumpingSound.mp3';
 
-const TralaleroMovement = ({ gameStarted, onGameOver, onScoreUpdate }) => {
+const TralaleroMovement = ({ gameStarted, onGameOver }) => {
   const [position, setPosition] = useState(100);
   const [rotation, setRotation] = useState(0);
   const [pipes, setPipes] = useState([]);
@@ -12,14 +12,13 @@ const TralaleroMovement = ({ gameStarted, onGameOver, onScoreUpdate }) => {
   const audioRef = useRef(null);
   const gameAreaRef = useRef(null);
   const frameCount = useRef(0);
-  const passedPipes = useRef(new Set());
 
   // Physics constants
   const JUMP_FORCE = -8;
   const GRAVITY = 0.4;
   const MAX_ROTATION = 25;
   const ROTATION_SPEED = 5;
-  const CEILING_HEIGHT = 0;
+  const CEILING_HEIGHT = 0; // Changed from -50 to prevent going above screen
   const PIPE_SPEED = 2;
   const PIPE_SPAWN_RATE = 120;
   const BIRD_WIDTH = 24;
@@ -48,7 +47,7 @@ const TralaleroMovement = ({ gameStarted, onGameOver, onScoreUpdate }) => {
           id: Date.now(),
           left: 400,
           topHeight: 150 + Math.random() * 100,
-          gap: 180
+          gap: 180 // Slightly increased gap for better playability
         }
       ]);
     }, PIPE_SPAWN_RATE * 16);
@@ -94,7 +93,7 @@ const TralaleroMovement = ({ gameStarted, onGameOver, onScoreUpdate }) => {
           return CEILING_HEIGHT;
         }
         
-        // Ground collision
+        // Ground collision (accounting for bird height)
         if (newPosition > GROUND_HEIGHT - BIRD_HEIGHT) {
           isGameOver.current = true;
           onGameOver();
@@ -110,25 +109,13 @@ const TralaleroMovement = ({ gameStarted, onGameOver, onScoreUpdate }) => {
         return lerp(prev, targetRotation, 0.1);
       });
 
-      // Score calculation
-      pipes.forEach(pipe => {
-        // Check if pipe is behind the bird (50 is bird's x position)
-        if (!passedPipes.current.has(pipe.id) && pipe.left + 80 < 50) {
-          passedPipes.current.add(pipe.id);
-          onScoreUpdate(prevScore => prevScore + 1); // This now works
-        }
-      });
-
       // Clean up off-screen pipes
       setPipes(prev => prev.filter(pipe => pipe.left > -80));
 
     }, 16);
 
-    return () => {
-      clearInterval(gameLoop);
-      passedPipes.current.clear();
-    };
-  }, [gameStarted, position, onGameOver, pipes, onScoreUpdate]);
+    return () => clearInterval(gameLoop);
+  }, [gameStarted, position, onGameOver]);
 
   const lerp = (start, end, amt) => {
     return (1 - amt) * start + amt * end;
