@@ -3,7 +3,7 @@ import "./App.css";
 import TralaleroMovement from './components/TralaleroMovement';
 import MovingBackground from './components/MovingBackground';
 import PlayButton from './components/PlayButton';
-import Score from './components/Score'; // Add this import
+import Score from './components/Score'; 
 import gameOverSound from './assets/tralaleroSound.mp3';
 
 function App() {
@@ -56,4 +56,4 @@ function App() {
   );
 }
 
-export default App;
+export default App;   
