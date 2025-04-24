@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import TralaleroImage from '../assets/tralalero.png';
 import Pipe from './Pipe';
 import jumpSound from '../assets/jumpingSound.mp3';
+import scoreSound from '../assets/scoreSound.mp3';
 
 const TralaleroMovement = ({ gameStarted, onGameOver, incrementScore }) => {
   const [position, setPosition] = useState(100);
@@ -13,6 +14,7 @@ const TralaleroMovement = ({ gameStarted, onGameOver, incrementScore }) => {
   const gameAreaRef = useRef(null);
   const frameCount = useRef(0);
   const passedPipes = useRef(new Set());
+  const scoreAudioRef = useRef(null);
 
   // Physics constants
   const JUMP_FORCE = -8;
@@ -30,10 +32,15 @@ const TralaleroMovement = ({ gameStarted, onGameOver, incrementScore }) => {
   // Initialize audio
   useEffect(() => {
     audioRef.current = new Audio(jumpSound);
+    scoreAudioRef.current = new Audio(scoreSound); // Initialize score sound
     return () => {
       if (audioRef.current) {
         audioRef.current.pause();
         audioRef.current = null;
+      }
+      if (scoreAudioRef.current) {
+        scoreAudioRef.current.pause();
+        scoreAudioRef.current = null;
       }
     };
   }, []);
@@ -116,6 +123,10 @@ const TralaleroMovement = ({ gameStarted, onGameOver, incrementScore }) => {
         if (!passedPipes.current.has(pipe.id) && pipe.left + 80 < BIRD_X_POSITION) {
           passedPipes.current.add(pipe.id);
           incrementScore();
+          if (scoreAudioRef.current) {
+            scoreAudioRef.current.currentTime = 0;
+            scoreAudioRef.current.play();
+          }
         }
       });
 
