@@ -1,5 +1,7 @@
 import React from 'react';
 
+// This component renders a play button with a given text and an onClick handler.
+
 const PlayButton = ({ onClick, text }) => {
   return (
     <button 
