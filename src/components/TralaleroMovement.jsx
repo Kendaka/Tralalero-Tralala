@@ -3,7 +3,7 @@ import TralaleroImage from '../assets/tralalero.png';
 import Pipe from './Pipe';
 import jumpSound from '../assets/jumpingSound.mp3';
 
-const TralaleroMovement = ({ gameStarted, onGameOver }) => {
+const TralaleroMovement = ({ gameStarted, onGameOver, incrementScore }) => {
   const [position, setPosition] = useState(100);
   const [rotation, setRotation] = useState(0);
   const [pipes, setPipes] = useState([]);
@@ -12,13 +12,14 @@ const TralaleroMovement = ({ gameStarted, onGameOver }) => {
   const audioRef = useRef(null);
   const gameAreaRef = useRef(null);
   const frameCount = useRef(0);
+  const passedPipes = useRef(new Set());
 
   // Physics constants
   const JUMP_FORCE = -8;
   const GRAVITY = 0.4;
   const MAX_ROTATION = 25;
   const ROTATION_SPEED = 5;
-  const CEILING_HEIGHT = 0; // Changed from -50 to prevent going above screen
+  const CEILING_HEIGHT = 0;
   const PIPE_SPEED = 2;
   const PIPE_SPAWN_RATE = 120;
   const BIRD_WIDTH = 24;
@@ -47,7 +48,7 @@ const TralaleroMovement = ({ gameStarted, onGameOver }) => {
           id: Date.now(),
           left: 400,
           topHeight: 150 + Math.random() * 100,
-          gap: 180 // Slightly increased gap for better playability
+          gap: 180
         }
       ]);
     }, PIPE_SPAWN_RATE * 16);
@@ -74,6 +75,19 @@ const TralaleroMovement = ({ gameStarted, onGameOver }) => {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [gameStarted]);
+
+  // Check for passed pipes and update score
+  useEffect(() => {
+    if (!gameStarted || isGameOver.current) return;
+
+    pipes.forEach(pipe => {
+      // If pipe is behind the bird and we haven't marked it as passed yet
+      if (pipe.left + 80 < 50 && !passedPipes.current.has(pipe.id)) {
+        passedPipes.current.add(pipe.id);
+        incrementScore();
+      }
+    });
+  }, [pipes, gameStarted, incrementScore]);
 
   // Game physics loop
   useEffect(() => {
