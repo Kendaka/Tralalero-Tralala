@@ -3,7 +3,7 @@ import TralaleroImage from '../assets/tralalero.png';
 import Pipe from './Pipe';
 import jumpSound from '../assets/jumpingSound.mp3';
 
-const TralaleroMovement = ({ gameStarted, onGameOver }) => {
+const TralaleroMovement = ({ gameStarted, onGameOver, onScoreUpdate }) => {
   const [position, setPosition] = useState(100);
   const [rotation, setRotation] = useState(0);
   const [pipes, setPipes] = useState([]);
@@ -12,13 +12,14 @@ const TralaleroMovement = ({ gameStarted, onGameOver }) => {
   const audioRef = useRef(null);
   const gameAreaRef = useRef(null);
   const frameCount = useRef(0);
+  const passedPipes = useRef(new Set());
 
   // Physics constants
   const JUMP_FORCE = -8;
   const GRAVITY = 0.4;
   const MAX_ROTATION = 25;
   const ROTATION_SPEED = 5;
-  const CEILING_HEIGHT = 0; // Changed from -50 to prevent going above screen
+  const CEILING_HEIGHT = 0;
   const PIPE_SPEED = 2;
   const PIPE_SPAWN_RATE = 120;
   const BIRD_WIDTH = 24;
@@ -47,7 +48,7 @@ const TralaleroMovement = ({ gameStarted, onGameOver }) => {
           id: Date.now(),
           left: 400,
           topHeight: 150 + Math.random() * 100,
-          gap: 180 // Slightly increased gap for better playability
+          gap: 180
         }
       ]);
     }, PIPE_SPAWN_RATE * 16);
@@ -93,7 +94,7 @@ const TralaleroMovement = ({ gameStarted, onGameOver }) => {
           return CEILING_HEIGHT;
         }
         
-        // Ground collision (accounting for bird height)
+        // Ground collision
         if (newPosition > GROUND_HEIGHT - BIRD_HEIGHT) {
           isGameOver.current = true;
           onGameOver();
@@ -109,13 +110,28 @@ const TralaleroMovement = ({ gameStarted, onGameOver }) => {
         return lerp(prev, targetRotation, 0.1);
       });
 
+      // Score calculation
+      pipes.forEach(pipe => {
+        const pipeCenter = pipe.left + 40; // Middle of the pipe
+        if (!passedPipes.current.has(pipe.id) && pipeCenter < 50) { // Changed condition
+          passedPipes.current.add(pipe.id);
+          onScoreUpdate(prev => {
+            const newScore = prev + 1;
+            return newScore;
+          });
+        }
+      });
+
       // Clean up off-screen pipes
       setPipes(prev => prev.filter(pipe => pipe.left > -80));
 
     }, 16);
 
-    return () => clearInterval(gameLoop);
-  }, [gameStarted, position, onGameOver]);
+    return () => {
+      clearInterval(gameLoop);
+      passedPipes.current.clear();
+    };
+  }, [gameStarted, position, onGameOver, pipes, onScoreUpdate]);
 
   const lerp = (start, end, amt) => {
     return (1 - amt) * start + amt * end;
