@@ -3,7 +3,7 @@ import React from 'react';
 const Score = ({ score = 0, highScore = 0, isGameActive = false }) => {
     return (
         <>
-            {/* Current Score (centered) */}
+            {/* Current Score (centered)*/}
             {isGameActive && (
                 <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-4xl text-white font-bold bg-black/50 rounded-xl px-6 py-3">
                     {score}
