@@ -25,6 +25,7 @@ const TralaleroMovement = ({ gameStarted, onGameOver, incrementScore }) => {
   const BIRD_WIDTH = 24;
   const BIRD_HEIGHT = 24;
   const GROUND_HEIGHT = 500;
+  const BIRD_X_POSITION = 50;
 
   // Initialize audio
   useEffect(() => {
@@ -76,19 +77,6 @@ const TralaleroMovement = ({ gameStarted, onGameOver, incrementScore }) => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [gameStarted]);
 
-  // Check for passed pipes and update score
-  useEffect(() => {
-    if (!gameStarted || isGameOver.current) return;
-
-    pipes.forEach(pipe => {
-      // If pipe is behind the bird and we haven't marked it as passed yet
-      if (pipe.left + 80 < 50 && !passedPipes.current.has(pipe.id)) {
-        passedPipes.current.add(pipe.id);
-        incrementScore();
-      }
-    });
-  }, [pipes, gameStarted, incrementScore]);
-
   // Game physics loop
   useEffect(() => {
     if (!gameStarted || isGameOver.current) return;
@@ -107,7 +95,7 @@ const TralaleroMovement = ({ gameStarted, onGameOver, incrementScore }) => {
           return CEILING_HEIGHT;
         }
         
-        // Ground collision (accounting for bird height)
+        // Ground collision
         if (newPosition > GROUND_HEIGHT - BIRD_HEIGHT) {
           isGameOver.current = true;
           onGameOver();
@@ -123,13 +111,27 @@ const TralaleroMovement = ({ gameStarted, onGameOver, incrementScore }) => {
         return lerp(prev, targetRotation, 0.1);
       });
 
-      // Clean up off-screen pipes
-      setPipes(prev => prev.filter(pipe => pipe.left > -80));
+      // Check for passed pipes
+      pipes.forEach(pipe => {
+        if (!passedPipes.current.has(pipe.id) && pipe.left + 80 < BIRD_X_POSITION) {
+          passedPipes.current.add(pipe.id);
+          incrementScore();
+        }
+      });
+
+      // Update pipe positions and clean up off-screen pipes
+      setPipes(prev => prev
+        .map(pipe => ({
+          ...pipe,
+          left: pipe.left - PIPE_SPEED
+        }))
+        .filter(pipe => pipe.left > -80)
+      );
 
     }, 16);
 
     return () => clearInterval(gameLoop);
-  }, [gameStarted, position, onGameOver]);
+  }, [gameStarted, pipes, position, onGameOver, incrementScore]);
 
   const lerp = (start, end, amt) => {
     return (1 - amt) * start + amt * end;
@@ -145,7 +147,6 @@ const TralaleroMovement = ({ gameStarted, onGameOver, incrementScore }) => {
           left={pipe.left}
           topHeight={pipe.topHeight}
           gap={pipe.gap}
-          speed={PIPE_SPEED}
           onCollide={() => {
             isGameOver.current = true;
             onGameOver();
@@ -162,7 +163,7 @@ const TralaleroMovement = ({ gameStarted, onGameOver, incrementScore }) => {
         className="w-10 h-auto absolute origin-center transition-transform duration-100 z-10"
         style={{ 
           top: `${position}px`, 
-          left: '50px',
+          left: `${BIRD_X_POSITION}px`,
           transform: `scaleX(-1) rotate(${rotation}deg)`,
           filter: 'drop-shadow(0 0 2px rgba(0,0,0,0.5))'
         }}

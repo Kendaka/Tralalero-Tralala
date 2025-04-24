@@ -1,23 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 
-const Pipe = ({ topHeight = 300, gap = 700, left = 300, speed = 2, onCollide, birdPosition }) => {
-  const [pipeLeft, setPipeLeft] = useState(left);
-
+const Pipe = ({ topHeight = 300, gap = 180, left = 300, onCollide, birdPosition, birdWidth, birdHeight }) => {
   useEffect(() => {
     if (!birdPosition) return;
     
     // Bird hitbox dimensions
     const bird = {
-      left: 50,
-      right: 50 + 24,
+      left: 50, // This should match BIRD_X_POSITION in TralaleroMovement
+      right: 50 + birdWidth,
       top: birdPosition,
-      bottom: birdPosition + 24
+      bottom: birdPosition + birdHeight
     };
 
     // Pipe hitbox dimensions
     const pipe = {
-      left: pipeLeft,
-      right: pipeLeft + 80,
+      left: left,
+      right: left + 80,
       topPipeBottom: topHeight,
       bottomPipeTop: topHeight + gap
     };
@@ -34,17 +32,10 @@ const Pipe = ({ topHeight = 300, gap = 700, left = 300, speed = 2, onCollide, bi
     if (hitTopPipe || hitBottomPipe) {
       onCollide();
     }
-  }, [pipeLeft, birdPosition, topHeight, gap]);
-
-  useEffect(() => {
-    const movePipe = setInterval(() => {
-      setPipeLeft(prev => prev - speed);
-    }, 16);
-    return () => clearInterval(movePipe);
-  }, [speed]);
+  }, [left, birdPosition, topHeight, gap, birdWidth, birdHeight]);
 
   return (
-    <div className="absolute" style={{ left: `${pipeLeft}px` }}>
+    <div className="absolute" style={{ left: `${left}px` }}>
       <div 
         className="absolute bg-green-500 border-r-4 border-l-4 border-green-700"
         style={{ 
