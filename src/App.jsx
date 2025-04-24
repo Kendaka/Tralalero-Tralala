@@ -59,10 +59,12 @@ function App() {
           />
         ) : (
           <TralaleroMovement 
-  gameStarted={true} 
-  onGameOver={handleGameOver}
-  onScoreUpdate={(newScore) => setScore(newScore)} // Changed to direct value update
-/>
+            gameStarted={gameState === 'playing'} 
+            onGameOver={handleGameOver}
+            onScoreUpdate={(newScore) => {
+              setScore(newScore); 
+            }}
+        />
         )}
       </div>
     </div>

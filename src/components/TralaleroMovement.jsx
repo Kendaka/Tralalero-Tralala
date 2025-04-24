@@ -112,13 +112,10 @@ const TralaleroMovement = ({ gameStarted, onGameOver, onScoreUpdate }) => {
 
       // Score calculation
       pipes.forEach(pipe => {
-        const pipeCenter = pipe.left + 40; // Middle of the pipe
-        if (!passedPipes.current.has(pipe.id) && pipeCenter < 50) { // Changed condition
+        // Check if pipe is behind the bird (50 is bird's x position)
+        if (!passedPipes.current.has(pipe.id) && pipe.left + 80 < 50) {
           passedPipes.current.add(pipe.id);
-          onScoreUpdate(prev => {
-            const newScore = prev + 1;
-            return newScore;
-          });
+          onScoreUpdate(prevScore => prevScore + 1); // This now works
         }
       });
 
