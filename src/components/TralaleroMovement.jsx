@@ -32,7 +32,7 @@ const TralaleroMovement = ({ gameStarted, onGameOver, incrementScore }) => {
   // Initialize audio
   useEffect(() => {
     audioRef.current = new Audio(jumpSound);
-    scoreAudioRef.current = new Audio(scoreSound); // Initialize score sound
+    scoreAudioRef.current = new Audio(scoreSound); 
     return () => {
       if (audioRef.current) {
         audioRef.current.pause();
