@@ -12,7 +12,7 @@ function App() {
   const [highScore, setHighScore] = useState(0);
   const audioRef = useRef(null);
 
-  // Initialize audio and load high score from localStorage
+  // Initialize audio and load high score from localStorag
   useEffect(() => {
     audioRef.current = new Audio(gameOverSound);
     const savedHighScore = localStorage.getItem('flappyHighScore') || 0;
