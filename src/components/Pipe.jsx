@@ -6,7 +6,7 @@ const Pipe = ({ topHeight = 300, gap = 180, left = 300, onCollide, birdPosition,
     
     // Bird hitbox dimensions
     const bird = {
-      left: 50, // This should match BIRD_X_POSITION in TralaleroMovement
+      left: 50, 
       right: 50 + birdWidth,
       top: birdPosition,
       bottom: birdPosition + birdHeight
@@ -50,7 +50,7 @@ const Pipe = ({ topHeight = 300, gap = 180, left = 300, onCollide, birdPosition,
           top: `${topHeight + gap}px`, 
           width: 80, 
           height: '100vh' 
-        }}
+        }}z
       />
     </div>
   );
