@@ -29,7 +29,7 @@ const TralaleroMovement = ({ gameStarted, onGameOver, incrementScore }) => {
   const GROUND_HEIGHT = 500;
   const BIRD_X_POSITION = 50;
 
-  // Initialize audi
+  // Initialize audio
   useEffect(() => {
     audioRef.current = new Audio(jumpSound);
     scoreAudioRef.current = new Audio(scoreSound); 
