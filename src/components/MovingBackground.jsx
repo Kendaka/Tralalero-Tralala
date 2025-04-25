@@ -1,6 +1,6 @@
 import backgroundImage from '../assets/movingBackground.png';
 
-// This component renders a moving background image that covers the entire screen.
+// This component renders a moving background image that covers the entire screen
 
 const MovingBackground = () => {
   return (
