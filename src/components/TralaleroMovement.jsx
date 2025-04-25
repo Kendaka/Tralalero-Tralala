@@ -64,24 +64,45 @@ const TralaleroMovement = ({ gameStarted, onGameOver, incrementScore }) => {
     return () => clearInterval(pipeInterval);
   }, [gameStarted]);
 
-  // Handle keyboard input
+  // Handle both keyboard and touch input
   useEffect(() => {
     if (!gameStarted || isGameOver.current) return;
+
+    const handleJump = () => {
+      if (audioRef.current) {
+        audioRef.current.currentTime = 0;
+        audioRef.current.play();
+      }
+      velocity.current = JUMP_FORCE;
+      setRotation(-MAX_ROTATION);
+    };
 
     const handleKeyDown = (e) => {
       if (e.code === 'Space') {
         e.preventDefault();
-        if (audioRef.current) {
-          audioRef.current.currentTime = 0;
-          audioRef.current.play();
-        }
-        velocity.current = JUMP_FORCE;
-        setRotation(-MAX_ROTATION);
+        handleJump();
       }
     };
 
+    const handleTouchStart = (e) => {
+      e.preventDefault();
+      handleJump();
+    };
+
     window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    
+    // Add touch event listener to the game area
+    const gameArea = gameAreaRef.current;
+    if (gameArea) {
+      gameArea.addEventListener('touchstart', handleTouchStart, { passive: false });
+    }
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      if (gameArea) {
+        gameArea.removeEventListener('touchstart', handleTouchStart);
+      }
+    };
   }, [gameStarted]);
 
   // Game physics loop
@@ -151,7 +172,11 @@ const TralaleroMovement = ({ gameStarted, onGameOver, incrementScore }) => {
   if (!gameStarted) return null;
 
   return (
-    <div ref={gameAreaRef} className="relative w-full h-full overflow-hidden">
+    <div 
+      ref={gameAreaRef} 
+      className="relative w-full h-full overflow-hidden touch-none"
+      style={{ touchAction: 'none' }}
+    >
       {pipes.map(pipe => (
         <Pipe
           key={pipe.id}
