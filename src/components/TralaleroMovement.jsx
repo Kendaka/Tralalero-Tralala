@@ -24,10 +24,10 @@ const TralaleroMovement = ({ gameStarted, onGameOver, incrementScore }) => {
   const CEILING_HEIGHT = 0; // Adjust this value to change the ceiling height
   const PIPE_SPEED = 2; // Speed of the pipes moving towards the bird
   const PIPE_SPAWN_RATE = 120;  // Adjust this value to change the frequency of pipe generation
-  const BIRD_WIDTH = 24;
-  const BIRD_HEIGHT = 24;
-  const GROUND_HEIGHT = 500;
-  const BIRD_X_POSITION = 50;
+  const BIRD_WIDTH = 24; // Width of the bird image
+  const BIRD_HEIGHT = 24; // Height of the bird image
+  const GROUND_HEIGHT = 500; // Adjust this value to change the ground height
+  const BIRD_X_POSITION = 50; // X position of the bird
 
   // Initialize audio
   useEffect(() => {
