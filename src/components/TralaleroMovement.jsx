@@ -17,9 +17,9 @@ const TralaleroMovement = ({ gameStarted, onGameOver, incrementScore }) => {
   const scoreAudioRef = useRef(null);
 
   // Constants
-  const JUMP_FORCE = -8;
-  const GRAVITY = 0.4;
-  const MAX_ROTATION = 25;
+  const JUMP_FORCE = -8; // Adjust this value to change the jump height
+  const GRAVITY = 0.4; // Adjust this value to change the falling speed
+  const MAX_ROTATION = 25; // Maximum rotation angle in degrees
   const ROTATION_SPEED = 5;
   const CEILING_HEIGHT = 0;
   const PIPE_SPEED = 2;
