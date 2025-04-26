@@ -16,7 +16,7 @@ const TralaleroMovement = ({ gameStarted, onGameOver, incrementScore }) => {
   const passedPipes = useRef(new Set());
   const scoreAudioRef = useRef(null);
 
-  // Physics constants
+  // Constants
   const JUMP_FORCE = -8;
   const GRAVITY = 0.4;
   const MAX_ROTATION = 25;
