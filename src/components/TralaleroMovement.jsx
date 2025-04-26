@@ -20,10 +20,10 @@ const TralaleroMovement = ({ gameStarted, onGameOver, incrementScore }) => {
   const JUMP_FORCE = -8; // Adjust this value to change the jump height
   const GRAVITY = 0.4; // Adjust this value to change the falling speed
   const MAX_ROTATION = 25; // Maximum rotation angle in degrees
-  const ROTATION_SPEED = 5;
-  const CEILING_HEIGHT = 0;
-  const PIPE_SPEED = 2;
-  const PIPE_SPAWN_RATE = 120;
+  const ROTATION_SPEED = 5; // Speed of rotation
+  const CEILING_HEIGHT = 0; // Adjust this value to change the ceiling height
+  const PIPE_SPEED = 2; // Speed of the pipes moving towards the bird
+  const PIPE_SPAWN_RATE = 120;  // Adjust this value to change the frequency of pipe generation
   const BIRD_WIDTH = 24;
   const BIRD_HEIGHT = 24;
   const GROUND_HEIGHT = 500;
