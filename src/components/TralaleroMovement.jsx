@@ -27,7 +27,7 @@ const TralaleroMovement = ({ gameStarted, onGameOver, incrementScore }) => {
   const BIRD_WIDTH = 24; // Width of the bird image
   const BIRD_HEIGHT = 24; // Height of the bird image
   const GROUND_HEIGHT = 500; // Adjust this value to change the ground height
-  const BIRD_X_POSITION = 50; // X position of the bird
+  const BIRD_X_POSITION = 50; // X position of bird
 
   // Initialize audio
   useEffect(() => {
